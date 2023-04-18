@@ -1,5 +1,6 @@
-import React from 'react';
-import { useRootSelector } from '../../store';
+import React, { useEffect } from 'react';
+import { fetchTournaments } from '../../actions/tournaments';
+import { useRootSelector, useRootDispatch } from '../../store';
 import selectTournaments from '../../selectors/tournaments';
 import Container from '../../components/Container';
 import H4 from '../../components/H4';
@@ -7,7 +8,12 @@ import Toolbar from './Toolbar';
 import Grid from './Grid';
 
 const Tournaments = () => {
+  const dispatch = useRootDispatch();
   const tournaments = useRootSelector(selectTournaments);
+
+  useEffect(() => {
+    dispatch(fetchTournaments());
+  }, [dispatch]);
 
   return (
     <Container>

@@ -1,3 +1,5 @@
+import type { Actions } from '../actions/tournaments';
+
 export type TournamentDetails = {
   id: string;
   name: string;
@@ -26,7 +28,7 @@ const initialState: TournamentDetails[] = Array(30)
 
 export default function tournaments(
   state: TournamentDetails[] = initialState,
-  action: unknown
+  action: Actions
 ) {
   return state;
 }
