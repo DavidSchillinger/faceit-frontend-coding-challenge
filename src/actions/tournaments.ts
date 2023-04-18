@@ -1,24 +1,21 @@
 import { RootDispatch } from '../store';
 import { API_TOURNAMENTS_URL } from '../constants/api';
-import { TournamentDetails } from '../reducers/tournaments';
+import { Tournament } from '../reducers/tournaments';
 
-type Fetch = (dispatch: RootDispatch) => Promise<void>;
 type Started = { type: 'tournaments/fetchStarted' };
 type Succeeded = {
   type: 'tournaments/fetchSucceeded';
-  payload: TournamentDetails[];
+  payload: Tournament[];
 };
 type Failed = { type: 'tournaments/fetchFailed'; error: unknown };
 
-type Actions = Fetch | Started | Succeeded | Failed;
+type Actions = Started | Succeeded | Failed;
 
 const getTournamentsStarted = (): Started => ({
   type: 'tournaments/fetchStarted',
 });
 
-const getTournamentsSuccess = (
-  tournaments: TournamentDetails[]
-): Succeeded => ({
+const getTournamentsSuccess = (tournaments: Tournament[]): Succeeded => ({
   type: 'tournaments/fetchSucceeded',
   payload: tournaments,
 });
@@ -28,12 +25,12 @@ const getTournamentsFailed = (error: unknown): Failed => ({
   error,
 });
 
-const fetchTournaments = (): Fetch => async (dispatch) => {
+const fetchTournaments = () => async (dispatch: RootDispatch) => {
   dispatch(getTournamentsStarted());
 
   try {
-    const tournaments: any = await fetch(API_TOURNAMENTS_URL);
-    console.log('RESPONSE', tournaments);
+    const response = await fetch(API_TOURNAMENTS_URL);
+    const tournaments = await response.json();
     dispatch(getTournamentsSuccess(tournaments));
   } catch (error) {
     dispatch(getTournamentsFailed(error));

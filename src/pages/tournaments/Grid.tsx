@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import Tournament from './Tournament';
-import type { TournamentDetails } from '../../reducers/tournaments';
+import TournamentCard from './Tournament';
+import { TournamentsState } from '../../reducers/tournaments';
 import theme from '../../theme';
 
 const Container = styled.div`
@@ -10,27 +10,39 @@ const Container = styled.div`
   gap: ${theme.spacing(4)};
 `;
 
+const Placeholder = styled.div`
+  text-align: center;
+`;
+
 type Props = {
-  tournaments: TournamentDetails[];
+  state: TournamentsState;
   onClickEdit: (tournamentId: string) => void;
   onClickDelete: (tournamentId: string) => void;
 };
 
 const Grid = (props: Props) => {
-  const { tournaments, onClickEdit, onClickDelete } = props;
+  const { state, onClickEdit, onClickDelete } = props;
 
-  return (
-    <Container>
-      {tournaments.map((tournament) => (
-        <Tournament
-          key={tournament.id}
-          tournament={tournament}
-          onClickEdit={() => onClickEdit(tournament.id)}
-          onClickDelete={() => onClickDelete(tournament.id)}
-        />
-      ))}
-    </Container>
-  );
+  switch (state.status) {
+    case 'idle':
+    case 'pending':
+      return <Placeholder>Loading tournaments…</Placeholder>;
+    case 'error':
+      return <Placeholder>Something went wrong. TODO: Retry</Placeholder>;
+    case 'success':
+      return (
+        <Container>
+          {state.tournaments.map((tournament) => (
+            <TournamentCard
+              key={tournament.id}
+              tournament={tournament}
+              onClickEdit={() => onClickEdit(tournament.id)}
+              onClickDelete={() => onClickDelete(tournament.id)}
+            />
+          ))}
+        </Container>
+      );
+  }
 };
 
 export default Grid;

@@ -1,6 +1,6 @@
 import type { Actions } from '../actions/tournaments';
 
-export type TournamentDetails = {
+export type Tournament = {
   id: string;
   name: string;
   organizer: string;
@@ -12,23 +12,27 @@ export type TournamentDetails = {
   startDate: string; // ISO8601
 };
 
-const initialState: TournamentDetails[] = Array(30)
-  .fill(null)
-  .map((_, index) => ({
-    id: index + '',
-    name: 'Tournament Name ' + index,
-    organizer: 'Organizer Name',
-    game: 'Game Name',
-    participants: {
-      current: 123,
-      max: 256,
-    },
-    startDate: new Date().toISOString(),
-  }));
+type Idle = { status: 'idle' };
+type Pending = { status: 'pending' };
+type Success = { status: 'success'; tournaments: Tournament[] };
+type Error = { status: 'error'; error: unknown };
+
+export type TournamentsState = Idle | Pending | Success | Error;
+
+const initialState: TournamentsState = { status: 'idle' };
 
 export default function tournaments(
-  state: TournamentDetails[] = initialState,
+  state: TournamentsState = initialState,
   action: Actions
-) {
+): TournamentsState {
+  switch (action.type) {
+    case 'tournaments/fetchStarted':
+      return { status: 'pending' };
+    case 'tournaments/fetchSucceeded':
+      return { status: 'success', tournaments: action.payload };
+    case 'tournaments/fetchFailed':
+      return { status: 'error', error: action.error };
+  }
+
   return state;
 }

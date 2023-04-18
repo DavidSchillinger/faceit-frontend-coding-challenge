@@ -32,7 +32,7 @@ const Tournaments = () => {
 
       <Container>
         <Grid
-          tournaments={tournaments}
+          state={tournaments}
           onClickEdit={(tournamentId) => {
             console.log('EDIT ' + tournamentId);
           }}

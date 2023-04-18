@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import theme from '../../theme';
 import Button from '../../components/Button';
 import H6 from '../../components/H6';
-import type { TournamentDetails } from '../../reducers/tournaments';
+import { Tournament } from '../../reducers/tournaments';
 
 const Container = styled.div`
   background: ${theme.palette.background.base};
@@ -22,12 +22,12 @@ const dateTimeFormatter = new Intl.DateTimeFormat(undefined, {
 });
 
 type Props = {
-  tournament: TournamentDetails;
+  tournament: Tournament;
   onClickEdit: () => void;
   onClickDelete: () => void;
 };
 
-const Tournament = (props: Props) => {
+const TournamentCard = (props: Props) => {
   const { tournament, onClickEdit, onClickDelete } = props;
 
   return (
@@ -51,4 +51,4 @@ const Tournament = (props: Props) => {
   );
 };
 
-export default Tournament;
+export default TournamentCard;
