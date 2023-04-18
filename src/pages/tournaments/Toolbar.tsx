@@ -1,3 +1,4 @@
+import React from 'react';
 import styled from 'styled-components';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
@@ -7,10 +8,18 @@ const Container = styled.div`
   justify-content: space-between;
 `;
 
-const Toolbar = () => (
+type Props = {
+  onClickCreate: () => void;
+  onChangeSearch: (term: string) => void;
+};
+
+const Toolbar = (props: Props) => (
   <Container>
-    <Input placeholder="Search tournaments…" />
-    <Button>CREATE TOURNAMENT</Button>
+    <Input
+      placeholder="Search tournaments…"
+      onChange={(event) => props.onChangeSearch(event.target.value)}
+    />
+    <Button onClick={props.onClickCreate}>CREATE TOURNAMENT</Button>
   </Container>
 );
 

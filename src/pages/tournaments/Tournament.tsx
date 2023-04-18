@@ -1,7 +1,9 @@
+import React from 'react';
 import styled from 'styled-components';
 import theme from '../../theme';
 import Button from '../../components/Button';
 import H6 from '../../components/H6';
+import type { TournamentDetails } from '../../reducers/tournaments';
 
 const Container = styled.div`
   background: ${theme.palette.background.base};
@@ -14,19 +16,39 @@ const Actions = styled.div`
   margin-top: ${theme.spacing(2)};
 `;
 
-const Tournament = () => (
-  <Container>
-    <H6>Sed Natus Itaque</H6>
-    <div>Organizer: Sed Autem</div>
-    <div>Game: Rocket League</div>
-    <div>Participants: 3/256</div>
-    <div>Start: 27/02/2020, 12:50:53</div>
+const dateTimeFormatter = new Intl.DateTimeFormat(undefined, {
+  dateStyle: 'short',
+  timeStyle: 'medium',
+});
 
-    <Actions>
-      <Button>EDIT</Button>
-      <Button>DELETE</Button>
-    </Actions>
-  </Container>
-);
+type Props = {
+  tournament: TournamentDetails;
+  onClickEdit: () => void;
+  onClickDelete: () => void;
+};
+
+const Tournament = (props: Props) => {
+  const { tournament, onClickEdit, onClickDelete } = props;
+
+  return (
+    <Container>
+      <H6>{tournament.name}</H6>
+      <div>Organizer: {tournament.organizer}</div>
+      <div>Game: {tournament.game}</div>
+      <div>
+        Participants: {tournament.participants.current}/
+        {tournament.participants.max}
+      </div>
+      <div>
+        Start: {dateTimeFormatter.format(Date.parse(tournament.startDate))}
+      </div>
+
+      <Actions>
+        <Button onClick={onClickEdit}>EDIT</Button>
+        <Button onClick={onClickDelete}>DELETE</Button>
+      </Actions>
+    </Container>
+  );
+};
 
 export default Tournament;
