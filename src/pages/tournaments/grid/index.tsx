@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import styled from 'styled-components';
 import TournamentCard from './Tournament';
 import { Tournament } from '../../../reducers/tournaments';
@@ -24,6 +24,15 @@ const Grid = (props: GridProps) => {
 
   const dispatch = useRootDispatch();
 
+  const onClickDelete = useCallback(
+    (tournamentId: string) => {
+      if (window.confirm('Do you really want to delete this tournament?')) {
+        dispatch(deleteTournament(tournamentId));
+      }
+    },
+    [dispatch]
+  );
+
   if (tournaments.length === 0) {
     return <Message>No tournaments found.</Message>;
   }
@@ -35,7 +44,7 @@ const Grid = (props: GridProps) => {
           key={tournament.id}
           tournament={tournament}
           onClickEdit={() => {}}
-          onClickDelete={() => dispatch(deleteTournament(tournament.id))}
+          onClickDelete={() => onClickDelete(tournament.id)}
         />
       ))}
     </Container>
