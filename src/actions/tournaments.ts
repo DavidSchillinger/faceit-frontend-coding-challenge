@@ -71,12 +71,47 @@ const createTournament =
     }
   };
 
+const updateTournamentStarted = (tournament: Tournament) => ({
+  type: 'tournaments/updateStarted' as const,
+  payload: tournament,
+});
+
+const updateTournamentSuccess = (tournament: Tournament) => ({
+  type: 'tournaments/updateSuccess' as const,
+  payload: tournament,
+});
+
+const updateTournament =
+  (tournament: Tournament) => async (dispatch: RootDispatch) => {
+    dispatch(updateTournamentStarted(tournament));
+
+    try {
+      const url = `${API_TOURNAMENTS_URL}/${tournament.id}`;
+      const response = await fetch(url, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(tournament),
+      });
+      const update = await response.json();
+      dispatch(updateTournamentSuccess(update));
+    } catch {
+      dispatch(fetchTournaments());
+    }
+  };
+
 type Actions =
   | ReturnType<typeof fetchTournamentsStarted>
   | ReturnType<typeof fetchTournamentsSuccess>
   | ReturnType<typeof fetchTournamentsFailed>
   | ReturnType<typeof deleteTournamentStarted>
-  | ReturnType<typeof createTournamentSuccess>;
+  | ReturnType<typeof createTournamentSuccess>
+  | ReturnType<typeof updateTournamentStarted>
+  | ReturnType<typeof updateTournamentSuccess>;
 
 export type { Actions };
-export { fetchTournaments, deleteTournament, createTournament };
+export {
+  fetchTournaments,
+  deleteTournament,
+  createTournament,
+  updateTournament,
+};

@@ -4,10 +4,14 @@ import TournamentCard from './Tournament';
 import { Tournament } from '../../../reducers/tournaments';
 import theme from '../../../theme';
 import { useRootDispatch } from '../../../store';
-import { deleteTournament } from '../../../actions/tournaments';
+import {
+  deleteTournament,
+  updateTournament,
+} from '../../../actions/tournaments';
 import { Loading } from './Loading';
 import { Error } from './Error';
 import { Message } from './Message';
+import { isValidTournamentName } from '../isValidTournamentName';
 
 const Container = styled.div`
   display: grid;
@@ -26,9 +30,18 @@ const Grid = (props: GridProps) => {
 
   const onClickDelete = useCallback(
     (tournamentId: string) => {
-      if (window.confirm('Do you really want to delete this tournament?')) {
-        dispatch(deleteTournament(tournamentId));
-      }
+      if (!window.confirm('Do you really want to delete this tournament?'))
+        return;
+      dispatch(deleteTournament(tournamentId));
+    },
+    [dispatch]
+  );
+
+  const onClickEdit = useCallback(
+    (tournament: Tournament) => {
+      const name = window.prompt('New Tournament Name:', tournament.name);
+      if (!isValidTournamentName(name)) return;
+      dispatch(updateTournament({ ...tournament, name }));
     },
     [dispatch]
   );
@@ -43,7 +56,7 @@ const Grid = (props: GridProps) => {
         <div key={tournament.id}>
           <TournamentCard
             tournament={tournament}
-            onClickEdit={() => {}}
+            onClickEdit={() => onClickEdit(tournament)}
             onClickDelete={() => onClickDelete(tournament.id)}
           />
         </div>

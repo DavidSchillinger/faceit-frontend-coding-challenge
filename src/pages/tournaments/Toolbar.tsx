@@ -5,17 +5,12 @@ import { fetchTournaments, createTournament } from '../../actions/tournaments';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import { useRootDispatch } from '../../store';
+import { isValidTournamentName } from './isValidTournamentName';
 
 const Container = styled.div`
   display: flex;
   justify-content: space-between;
 `;
-
-const isValidTournamentName = (value: string | null): value is string => {
-  if (!value) return false;
-  // Latin letters, numbers and spaces allowed. Note Latin also includes diacritics...
-  return true;
-};
 
 const Toolbar = () => {
   const dispatch = useRootDispatch();

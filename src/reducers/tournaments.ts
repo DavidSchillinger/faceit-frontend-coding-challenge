@@ -23,6 +23,7 @@ export default function tournaments(
   state: TournamentsState = initialState,
   action: Actions
 ): TournamentsState {
+  // Read:
   switch (action.type) {
     case 'tournaments/fetchStarted':
       return { ...state, status: 'pending' };
@@ -32,6 +33,7 @@ export default function tournaments(
       return { ...state, status: 'rejected' };
   }
 
+  // Delete:
   switch (action.type) {
     case 'tournaments/deleteStarted':
       return {
@@ -42,11 +44,24 @@ export default function tournaments(
       };
   }
 
+  // Create
   switch (action.type) {
     case 'tournaments/createSucceeded':
       return {
         ...state,
         tournaments: [action.payload, ...state.tournaments],
+      };
+  }
+
+  // Update
+  switch (action.type) {
+    case 'tournaments/updateStarted':
+    case 'tournaments/updateSuccess':
+      return {
+        ...state,
+        tournaments: state.tournaments.map((tournament) =>
+          tournament.id === action.payload.id ? action.payload : tournament
+        ),
       };
   }
 
