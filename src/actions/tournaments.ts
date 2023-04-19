@@ -32,52 +32,32 @@ const fetchTournaments =
     }
   };
 
-const deleteTournamentStarted = () => ({
+const deleteTournamentStarted = (tournamentId: string) => ({
   type: 'tournaments/deleteStarted' as const,
-});
-
-const deleteTournamentSuccess = (tournamentId: string) => ({
-  type: 'tournaments/deleteSucceeded' as const,
   payload: tournamentId,
-});
-
-const deleteTournamentFailed = (error: unknown) => ({
-  type: 'tournaments/deleteFailed' as const,
-  error,
 });
 
 const deleteTournament =
   (tournamentId: string) => async (dispatch: RootDispatch) => {
-    dispatch(deleteTournamentStarted());
+    dispatch(deleteTournamentStarted(tournamentId));
 
     try {
-      await fetch(`${API_TOURNAMENTS_URL}/${tournamentId}`, {
-        method: 'DELETE',
-      });
-      dispatch(deleteTournamentSuccess(tournamentId));
-    } catch (error) {
-      dispatch(deleteTournamentFailed(error));
+      const url = `${API_TOURNAMENTS_URL}/${tournamentId}`;
+      await fetch(url, { method: 'DELETE' });
+    } catch {
+      // No specific error handling expected.
+    } finally {
+      dispatch(fetchTournaments());
     }
   };
-
-const createTournamentStarted = () => ({
-  type: 'tournaments/createStarted' as const,
-});
 
 const createTournamentSuccess = (tournament: Tournament) => ({
   type: 'tournaments/createSucceeded' as const,
   payload: tournament,
 });
 
-const createTournamentFailed = (error: unknown) => ({
-  type: 'tournaments/createFailed' as const,
-  error,
-});
-
 const createTournament =
   (tournamentName: string) => async (dispatch: RootDispatch) => {
-    dispatch(createTournamentStarted());
-
     try {
       const response = await fetch(API_TOURNAMENTS_URL, {
         method: 'POST',
@@ -86,8 +66,8 @@ const createTournament =
       });
       const tournament = await response.json();
       dispatch(createTournamentSuccess(tournament));
-    } catch (error) {
-      dispatch(createTournamentFailed(error));
+    } catch {
+      // No specific error handling expected.
     }
   };
 
@@ -96,11 +76,7 @@ type Actions =
   | ReturnType<typeof fetchTournamentsSuccess>
   | ReturnType<typeof fetchTournamentsFailed>
   | ReturnType<typeof deleteTournamentStarted>
-  | ReturnType<typeof deleteTournamentSuccess>
-  | ReturnType<typeof deleteTournamentFailed>
-  | ReturnType<typeof createTournamentStarted>
-  | ReturnType<typeof createTournamentSuccess>
-  | ReturnType<typeof createTournamentFailed>;
+  | ReturnType<typeof createTournamentSuccess>;
 
 export type { Actions };
 export { fetchTournaments, deleteTournament, createTournament };

@@ -12,18 +12,12 @@ export type Tournament = {
   startDate: string; // ISO8601
 };
 
-type Initial = { status: 'initial'; tournaments: null };
-type Pending = { status: 'pending'; tournaments: Tournament[] | null };
-type Success = { status: 'success'; tournaments: Tournament[] };
-type Error = {
-  status: 'error';
-  error: unknown;
-  tournaments: Tournament[] | null;
+export type TournamentsState = {
+  status: 'pending' | 'fulfilled' | 'rejected';
+  tournaments: Tournament[];
 };
 
-export type TournamentsState = Initial | Pending | Success | Error;
-
-const initialState: TournamentsState = { status: 'initial', tournaments: null };
+const initialState: TournamentsState = { status: 'pending', tournaments: [] };
 
 export default function tournaments(
   state: TournamentsState = initialState,
@@ -31,48 +25,28 @@ export default function tournaments(
 ): TournamentsState {
   switch (action.type) {
     case 'tournaments/fetchStarted':
-      return { status: 'pending', tournaments: state.tournaments };
+      return { ...state, status: 'pending' };
     case 'tournaments/fetchSucceeded':
-      return { status: 'success', tournaments: action.payload };
+      return { ...state, status: 'fulfilled', tournaments: action.payload };
     case 'tournaments/fetchFailed':
-      return {
-        status: 'error',
-        error: action.error,
-        tournaments: state.tournaments,
-      };
+      return { ...state, status: 'rejected' };
   }
 
   switch (action.type) {
     case 'tournaments/deleteStarted':
-      return { status: 'pending', tournaments: state.tournaments };
-    case 'tournaments/deleteSucceeded':
       return {
-        status: 'success',
-        tournaments: (state.tournaments ?? []).filter(
+        ...state,
+        tournaments: state.tournaments.filter(
           (tournament) => tournament.id !== action.payload
         ),
-      };
-    case 'tournaments/deleteFailed':
-      return {
-        status: 'error',
-        error: action.error,
-        tournaments: state.tournaments,
       };
   }
 
   switch (action.type) {
-    case 'tournaments/createStarted':
-      return { status: 'pending', tournaments: state.tournaments };
     case 'tournaments/createSucceeded':
       return {
-        status: 'success',
-        tournaments: [action.payload, ...(state.tournaments ?? [])],
-      };
-    case 'tournaments/createFailed':
-      return {
-        status: 'error',
-        error: action.error,
-        tournaments: state.tournaments,
+        ...state,
+        tournaments: [action.payload, ...state.tournaments],
       };
   }
 

@@ -16,7 +16,6 @@ const Tournaments = () => {
   }, [dispatch]);
 
   switch (state.status) {
-    case 'initial':
     case 'pending': {
       return state.tournaments === null ? (
         <GridLoading />
@@ -24,9 +23,9 @@ const Tournaments = () => {
         <Grid tournaments={state.tournaments} />
       );
     }
-    case 'error':
+    case 'rejected':
       return <GridError />;
-    case 'success':
+    case 'fulfilled':
       return <Grid tournaments={state.tournaments} />;
   }
 };
