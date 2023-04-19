@@ -60,5 +60,21 @@ export default function tournaments(
       };
   }
 
+  switch (action.type) {
+    case 'tournaments/createStarted':
+      return { status: 'pending', tournaments: state.tournaments };
+    case 'tournaments/createSucceeded':
+      return {
+        status: 'success',
+        tournaments: [action.payload, ...(state.tournaments ?? [])],
+      };
+    case 'tournaments/createFailed':
+      return {
+        status: 'error',
+        error: action.error,
+        tournaments: state.tournaments,
+      };
+  }
+
   return state;
 }

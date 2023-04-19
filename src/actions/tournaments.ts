@@ -60,13 +60,47 @@ const deleteTournament =
     }
   };
 
+const createTournamentStarted = () => ({
+  type: 'tournaments/createStarted' as const,
+});
+
+const createTournamentSuccess = (tournament: Tournament) => ({
+  type: 'tournaments/createSucceeded' as const,
+  payload: tournament,
+});
+
+const createTournamentFailed = (error: unknown) => ({
+  type: 'tournaments/createFailed' as const,
+  error,
+});
+
+const createTournament =
+  (tournamentName: string) => async (dispatch: RootDispatch) => {
+    dispatch(createTournamentStarted());
+
+    try {
+      const response = await fetch(API_TOURNAMENTS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: tournamentName }),
+      });
+      const tournament = await response.json();
+      dispatch(createTournamentSuccess(tournament));
+    } catch (error) {
+      dispatch(createTournamentFailed(error));
+    }
+  };
+
 type Actions =
   | ReturnType<typeof fetchTournamentsStarted>
   | ReturnType<typeof fetchTournamentsSuccess>
   | ReturnType<typeof fetchTournamentsFailed>
   | ReturnType<typeof deleteTournamentStarted>
   | ReturnType<typeof deleteTournamentSuccess>
-  | ReturnType<typeof deleteTournamentFailed>;
+  | ReturnType<typeof deleteTournamentFailed>
+  | ReturnType<typeof createTournamentStarted>
+  | ReturnType<typeof createTournamentSuccess>
+  | ReturnType<typeof createTournamentFailed>;
 
 export type { Actions };
-export { fetchTournaments, deleteTournament };
+export { fetchTournaments, deleteTournament, createTournament };

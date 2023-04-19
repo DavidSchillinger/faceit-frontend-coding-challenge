@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import styled from 'styled-components';
-import { fetchTournaments } from '../../actions/tournaments';
+import { fetchTournaments, createTournament } from '../../actions/tournaments';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import { useRootDispatch } from '../../store';
@@ -11,6 +11,12 @@ const Container = styled.div`
   justify-content: space-between;
 `;
 
+const isValidTournamentName = (value: string | null): value is string => {
+  if (!value) return false;
+  // Latin letters, numbers and spaces allowed. Note Latin also includes diacritics...
+  return true;
+};
+
 const Toolbar = () => {
   const dispatch = useRootDispatch();
 
@@ -18,13 +24,19 @@ const Toolbar = () => {
     dispatch(fetchTournaments({ search }));
   }, 200);
 
+  const onClickCreate = useCallback(() => {
+    const name = prompt('Tournament Name:');
+    if (!isValidTournamentName(name)) return;
+    dispatch(createTournament(name));
+  }, [dispatch]);
+
   return (
     <Container>
       <Input
         placeholder="Search tournaments…"
         onChange={(event) => debouncedSearch(event.target.value)}
       />
-      <Button>CREATE TOURNAMENT</Button>
+      <Button onClick={onClickCreate}>CREATE TOURNAMENT</Button>
     </Container>
   );
 };
