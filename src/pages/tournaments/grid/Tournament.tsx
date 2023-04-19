@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import theme from '../../theme';
-import Button from '../../components/Button';
-import H6 from '../../components/H6';
-import { Tournament } from '../../reducers/tournaments';
+import theme from '../../../theme';
+import Button from '../../../components/Button';
+import H6 from '../../../components/H6';
+import { Tournament } from '../../../reducers/tournaments';
 
 const Container = styled.div`
   background: ${theme.palette.background.base};

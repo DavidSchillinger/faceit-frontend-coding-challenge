@@ -1,26 +1,32 @@
 import React from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 import styled from 'styled-components';
+import { fetchTournaments } from '../../actions/tournaments';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
+import { useRootDispatch } from '../../store';
 
 const Container = styled.div`
   display: flex;
   justify-content: space-between;
 `;
 
-type Props = {
-  onClickCreate: () => void;
-  onChangeSearch: (term: string) => void;
-};
+const Toolbar = () => {
+  const dispatch = useRootDispatch();
 
-const Toolbar = (props: Props) => (
-  <Container>
-    <Input
-      placeholder="Search tournaments…"
-      onChange={(event) => props.onChangeSearch(event.target.value)}
-    />
-    <Button onClick={props.onClickCreate}>CREATE TOURNAMENT</Button>
-  </Container>
-);
+  const debouncedSearch = useDebouncedCallback((search: string) => {
+    dispatch(fetchTournaments({ search }));
+  }, 200);
+
+  return (
+    <Container>
+      <Input
+        placeholder="Search tournaments…"
+        onChange={(event) => debouncedSearch(event.target.value)}
+      />
+      <Button>CREATE TOURNAMENT</Button>
+    </Container>
+  );
+};
 
 export default Toolbar;

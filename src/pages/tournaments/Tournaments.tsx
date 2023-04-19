@@ -5,44 +5,46 @@ import selectTournaments from '../../selectors/tournaments';
 import Container from '../../components/Container';
 import H4 from '../../components/H4';
 import Toolbar from './Toolbar';
-import Grid from './Grid';
+import { Grid, GridError, GridLoading } from './grid';
 
 const Tournaments = () => {
   const dispatch = useRootDispatch();
-  const tournaments = useRootSelector(selectTournaments);
+  const state = useRootSelector(selectTournaments);
 
   useEffect(() => {
     dispatch(fetchTournaments());
   }, [dispatch]);
 
+  switch (state.status) {
+    case 'initial':
+    case 'pending': {
+      return state.tournaments === null ? (
+        <GridLoading />
+      ) : (
+        <Grid tournaments={state.tournaments} />
+      );
+    }
+    case 'error':
+      return <GridError />;
+    case 'success':
+      return <Grid tournaments={state.tournaments} />;
+  }
+};
+
+const Page = () => {
   return (
     <Container>
       <H4>FACEIT Tournaments</H4>
 
       <Container>
-        <Toolbar
-          onChangeSearch={(term) => {
-            console.log('SEARCH ' + term);
-          }}
-          onClickCreate={() => {
-            console.log('CREATE');
-          }}
-        />
+        <Toolbar />
       </Container>
 
       <Container>
-        <Grid
-          state={tournaments}
-          onClickEdit={(tournamentId) => {
-            console.log('EDIT ' + tournamentId);
-          }}
-          onClickDelete={(tournamentId) => {
-            console.log('DELETE ' + tournamentId);
-          }}
-        />
+        <Tournaments />
       </Container>
     </Container>
   );
 };
 
-export default Tournaments;
+export default Page;
