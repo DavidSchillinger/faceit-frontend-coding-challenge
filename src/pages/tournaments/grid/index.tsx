@@ -12,7 +12,7 @@ import { Message } from './Message';
 const Container = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: ${theme.spacing(4)};
+  gap: ${theme.spacing(6)};
 `;
 
 type GridProps = {
@@ -40,12 +40,13 @@ const Grid = (props: GridProps) => {
   return (
     <Container>
       {tournaments.map((tournament) => (
-        <TournamentCard
-          key={tournament.id}
-          tournament={tournament}
-          onClickEdit={() => {}}
-          onClickDelete={() => onClickDelete(tournament.id)}
-        />
+        <div key={tournament.id}>
+          <TournamentCard
+            tournament={tournament}
+            onClickEdit={() => {}}
+            onClickDelete={() => onClickDelete(tournament.id)}
+          />
+        </div>
       ))}
     </Container>
   );

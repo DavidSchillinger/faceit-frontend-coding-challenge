@@ -8,6 +8,7 @@ import { Tournament } from '../../../reducers/tournaments';
 const Container = styled.div`
   background: ${theme.palette.background.base};
   padding: ${theme.spacing(4)};
+  border-radius: ${theme.borderRadius};
 `;
 
 const Actions = styled.div`
@@ -16,7 +17,7 @@ const Actions = styled.div`
   margin-top: ${theme.spacing(2)};
 `;
 
-const dateTimeFormatter = new Intl.DateTimeFormat(undefined, {
+const dateTimeFormatter = new Intl.DateTimeFormat('en-GB', {
   dateStyle: 'short',
   timeStyle: 'medium',
 });
