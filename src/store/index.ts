@@ -4,14 +4,15 @@ import thunk, { ThunkMiddleware } from 'redux-thunk';
 import rootReducer from '../reducers';
 import { Actions } from '../actions/tournaments';
 
+export type RootState = ReturnType<typeof rootReducer>;
+
 const store = createStore(
   rootReducer,
-  applyMiddleware(thunk as ThunkMiddleware<{}, Actions>)
+  applyMiddleware(thunk as ThunkMiddleware<RootState, Actions>)
 );
 
 export default store;
 
-export type RootState = ReturnType<typeof store.getState>;
 export type RootDispatch = typeof store.dispatch;
 
 const useRootSelector: TypedUseSelectorHook<RootState> = useSelector;

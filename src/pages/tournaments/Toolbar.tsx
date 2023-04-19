@@ -1,7 +1,10 @@
 import React, { useCallback } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import styled from 'styled-components';
-import { fetchTournaments, createTournament } from '../../actions/tournaments';
+import {
+  createTournament,
+  updateTournamentSearch,
+} from '../../actions/tournaments';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import { useRootDispatch } from '../../store';
@@ -16,7 +19,7 @@ const Toolbar = () => {
   const dispatch = useRootDispatch();
 
   const debouncedSearch = useDebouncedCallback((search: string) => {
-    dispatch(fetchTournaments({ search }));
+    dispatch(updateTournamentSearch(search));
   }, 200);
 
   const onClickCreate = useCallback(() => {

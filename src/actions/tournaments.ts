@@ -1,6 +1,10 @@
-import { RootDispatch } from '../store';
+import { RootState } from '../store';
 import { API_TOURNAMENTS_URL } from '../constants/api';
 import { Tournament } from '../reducers/tournaments';
+import { ThunkAction } from 'redux-thunk';
+import { AnyAction } from 'redux';
+
+type Thunk = ThunkAction<void, RootState, unknown, AnyAction>;
 
 const fetchTournamentsStarted = () => ({
   type: 'tournaments/fetchStarted' as const,
@@ -16,21 +20,20 @@ const fetchTournamentsFailed = (error: unknown) => ({
   error,
 });
 
-const fetchTournaments =
-  ({ search }: { search?: string } = {}) =>
-  async (dispatch: RootDispatch) => {
-    dispatch(fetchTournamentsStarted());
+const fetchTournaments = (): Thunk => async (dispatch, getState) => {
+  dispatch(fetchTournamentsStarted());
 
-    try {
-      const base = API_TOURNAMENTS_URL;
-      const url = search ? `${base}?q=${search}` : base;
-      const response = await fetch(url);
-      const tournaments = await response.json();
-      dispatch(fetchTournamentsSuccess(tournaments));
-    } catch (error) {
-      dispatch(fetchTournamentsFailed(error));
-    }
-  };
+  try {
+    const base = API_TOURNAMENTS_URL;
+    const search = getState().tournaments.search;
+    const url = search ? `${base}?q=${search}` : base;
+    const response = await fetch(url);
+    const tournaments = await response.json();
+    dispatch(fetchTournamentsSuccess(tournaments));
+  } catch (error) {
+    dispatch(fetchTournamentsFailed(error));
+  }
+};
 
 const deleteTournamentStarted = (tournamentId: string) => ({
   type: 'tournaments/deleteStarted' as const,
@@ -38,15 +41,15 @@ const deleteTournamentStarted = (tournamentId: string) => ({
 });
 
 const deleteTournament =
-  (tournamentId: string) => async (dispatch: RootDispatch) => {
+  (tournamentId: string): Thunk =>
+  async (dispatch) => {
     dispatch(deleteTournamentStarted(tournamentId));
 
     try {
       const url = `${API_TOURNAMENTS_URL}/${tournamentId}`;
       await fetch(url, { method: 'DELETE' });
     } catch {
-      // No specific error handling expected.
-    } finally {
+      // Revert to server state.
       dispatch(fetchTournaments());
     }
   };
@@ -57,7 +60,8 @@ const createTournamentSuccess = (tournament: Tournament) => ({
 });
 
 const createTournament =
-  (tournamentName: string) => async (dispatch: RootDispatch) => {
+  (tournamentName: string): Thunk =>
+  async (dispatch) => {
     try {
       const response = await fetch(API_TOURNAMENTS_URL, {
         method: 'POST',
@@ -82,7 +86,8 @@ const updateTournamentSuccess = (tournament: Tournament) => ({
 });
 
 const updateTournament =
-  (tournament: Tournament) => async (dispatch: RootDispatch) => {
+  (tournament: Tournament): Thunk =>
+  async (dispatch) => {
     dispatch(updateTournamentStarted(tournament));
 
     try {
@@ -99,6 +104,18 @@ const updateTournament =
     }
   };
 
+const setTournamentSearch = (term: string) => ({
+  type: 'tournaments/setSearch' as const,
+  payload: term,
+});
+
+const updateTournamentSearch =
+  (term: string): Thunk =>
+  async (dispatch) => {
+    dispatch(setTournamentSearch(term));
+    dispatch(fetchTournaments());
+  };
+
 type Actions =
   | ReturnType<typeof fetchTournamentsStarted>
   | ReturnType<typeof fetchTournamentsSuccess>
@@ -106,7 +123,8 @@ type Actions =
   | ReturnType<typeof deleteTournamentStarted>
   | ReturnType<typeof createTournamentSuccess>
   | ReturnType<typeof updateTournamentStarted>
-  | ReturnType<typeof updateTournamentSuccess>;
+  | ReturnType<typeof updateTournamentSuccess>
+  | ReturnType<typeof setTournamentSearch>;
 
 export type { Actions };
 export {
@@ -114,4 +132,5 @@ export {
   deleteTournament,
   createTournament,
   updateTournament,
+  updateTournamentSearch,
 };

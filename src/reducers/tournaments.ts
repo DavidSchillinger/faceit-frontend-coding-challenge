@@ -14,10 +14,15 @@ export type Tournament = {
 
 export type TournamentsState = {
   status: 'pending' | 'fulfilled' | 'rejected';
+  search: string;
   tournaments: Tournament[];
 };
 
-const initialState: TournamentsState = { status: 'pending', tournaments: [] };
+const initialState: TournamentsState = {
+  status: 'pending',
+  search: '',
+  tournaments: [],
+};
 
 export default function tournaments(
   state: TournamentsState = initialState,
@@ -62,6 +67,14 @@ export default function tournaments(
         tournaments: state.tournaments.map((tournament) =>
           tournament.id === action.payload.id ? action.payload : tournament
         ),
+      };
+  }
+
+  switch (action.type) {
+    case 'tournaments/setSearch':
+      return {
+        ...state,
+        search: action.payload,
       };
   }
 
