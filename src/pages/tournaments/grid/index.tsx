@@ -15,8 +15,15 @@ import { isValidTournamentName } from '../isValidTournamentName';
 
 const Container = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: ${theme.spacing(6)};
+
+  @media (min-width: ${theme.breakpoints.s}) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: ${theme.breakpoints.m}) {
+    grid-template-columns: repeat(3, 1fr);
+  }
 `;
 
 type GridProps = {
