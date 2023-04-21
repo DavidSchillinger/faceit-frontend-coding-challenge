@@ -18,13 +18,8 @@ const Tournaments = () => {
   }, [dispatch]);
 
   switch (state.status) {
-    case 'pending': {
-      return state.tournaments === null ? (
-        <GridLoading />
-      ) : (
-        <Grid tournaments={state.tournaments} />
-      );
-    }
+    case 'pending':
+      return <GridLoading />;
     case 'rejected':
       return <GridError />;
     case 'fulfilled':
