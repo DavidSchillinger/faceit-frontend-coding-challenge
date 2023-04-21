@@ -23,6 +23,10 @@ const fetchTournamentsFailed = (error: unknown) => ({
 const fetchTournaments = (): Thunk => async (dispatch, getState) => {
   dispatch(fetchTournamentsStarted());
 
+  // The search here may return unexpected tournaments because it searches _all_ fields.
+  // This includes the ISO start date and id fields at the time of writing.
+  // It appears that the backend doesn't support searching specific fields. (filters are exact matches only)
+
   try {
     const base = API_TOURNAMENTS_URL;
     const search = getState().tournaments.search;
