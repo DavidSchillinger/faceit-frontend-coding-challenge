@@ -6,6 +6,8 @@ import Container from '../../components/Container';
 import H4 from '../../components/H4';
 import Toolbar from './Toolbar';
 import { Grid, GridError, GridLoading } from './grid';
+import styled from 'styled-components';
+import theme from '../../theme';
 
 const Tournaments = () => {
   const dispatch = useRootDispatch();
@@ -30,9 +32,13 @@ const Tournaments = () => {
   }
 };
 
+const PageContainer = styled(Container)`
+  padding: 0 ${theme.spacing(4)};
+`;
+
 const Page = () => {
   return (
-    <Container>
+    <PageContainer>
       <H4>FACEIT Tournaments</H4>
 
       <Container>
@@ -42,7 +48,7 @@ const Page = () => {
       <Container>
         <Tournaments />
       </Container>
-    </Container>
+    </PageContainer>
   );
 };
 
