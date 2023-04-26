@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { ChangeEvent, useCallback } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import styled from 'styled-components';
 import {
@@ -19,19 +19,31 @@ const Container = styled.div`
   flex-wrap: wrap;
 `;
 
-const Toolbar = () => {
+const useToolbarActionHandlers = () => {
   const dispatch = useRootDispatch();
 
-  const debouncedSearch = useDebouncedCallback((search: string) => {
-    dispatch(updateTournamentSearch(search));
-  }, 200);
+  const handleSearchChange = useDebouncedCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const search = event.target.value;
+      dispatch(updateTournamentSearch(search));
+    },
+    200
+  );
 
-  const onClickCreate = useCallback(() => {
+  const handleCreateClick = useCallback(() => {
+    // In the real world, we'd probably want to have a more powerful dialog that
+    // allows us to show validation errors to the user.
     const rawName = window.prompt('Tournament Name:');
     const name = parseTournamentName(rawName);
     if (!isValidTournamentName(name)) return;
     dispatch(createTournament(name));
   }, [dispatch]);
+
+  return { handleSearchChange, handleCreateClick };
+};
+
+const Toolbar = () => {
+  const { handleSearchChange, handleCreateClick } = useToolbarActionHandlers();
 
   return (
     <Container>
@@ -39,10 +51,11 @@ const Toolbar = () => {
       <div>
         <Input
           placeholder="Search tournaments…"
-          onChange={(event) => debouncedSearch(event.target.value)}
+          onChange={handleSearchChange}
         />
       </div>
-      <Button onClick={onClickCreate}>CREATE TOURNAMENT</Button>
+
+      <Button onClick={handleCreateClick}>CREATE TOURNAMENT</Button>
     </Container>
   );
 };
