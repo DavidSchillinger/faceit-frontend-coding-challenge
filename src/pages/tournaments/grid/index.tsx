@@ -12,6 +12,7 @@ import { Loading } from './Loading';
 import { Error } from './Error';
 import { Message } from './Message';
 import { isValidTournamentName } from '../isValidTournamentName';
+import { parseTournamentName } from '../parseTournamentName';
 
 const Container = styled.div`
   display: grid;
@@ -46,7 +47,8 @@ const Grid = (props: GridProps) => {
 
   const onClickEdit = useCallback(
     (tournament: Tournament) => {
-      const name = window.prompt('New Tournament Name:', tournament.name);
+      const rawName = window.prompt('New Tournament Name:', tournament.name);
+      const name = parseTournamentName(rawName);
       if (!isValidTournamentName(name)) return;
       dispatch(updateTournament({ ...tournament, name }));
     },

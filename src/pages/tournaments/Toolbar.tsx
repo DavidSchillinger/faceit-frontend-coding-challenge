@@ -9,6 +9,7 @@ import Button from '../../components/Button';
 import Input from '../../components/Input';
 import { useRootDispatch } from '../../store';
 import { isValidTournamentName } from './isValidTournamentName';
+import { parseTournamentName } from './parseTournamentName';
 import theme from '../../theme';
 
 const Container = styled.div`
@@ -26,7 +27,8 @@ const Toolbar = () => {
   }, 200);
 
   const onClickCreate = useCallback(() => {
-    const name = prompt('Tournament Name:');
+    const rawName = window.prompt('Tournament Name:');
+    const name = parseTournamentName(rawName);
     if (!isValidTournamentName(name)) return;
     dispatch(createTournament(name));
   }, [dispatch]);
